@@ -17,6 +17,7 @@ public class QuizController {
         new Question("Frequência no Brasil?", new String[]{"50Hz", "60Hz", "120Hz", "220Hz"}, 1),
         new Question("Capacitor armazena?", new String[]{"Corrente", "Energia elétrica", "Calor", "Magnetismo"}, 1),
         new Question("Símbolo da corrente?", new String[]{"V", "I", "R", "P"}, 1)
+        new Question("Quem descobriu o Brasil?", new String[]{"Pedro Alvares Cabral", "Pedro Américo", "José de Alencar", "Frei Caneca"}, 0)
     );
 
     @GetMapping
