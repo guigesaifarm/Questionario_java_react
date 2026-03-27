@@ -1,23 +1,19 @@
-# Questionario_java_react
-Teste para software java e react questionario de perguntas 
+# ⚡ Quiz Eletrotécnica
 
-Backend (Spring Boot)
+Quiz interativo sobre conceitos de elétrica e eletrotécnica.
 
-Rodar:
+## 🎮 Como usar
 
-mvn spring-boot:run
-Frontend (React)
+### Versão HTML (Recomendada - Não precisa instalar nada!)
+Abra o arquivo `index.html` diretamente no navegador ou acesse via GitHub Pages.
+
+### Versão Completa (Spring Boot + React)
+```bash
+# Backend
+cd backend
+./mvnw spring-boot:run
+
+# Frontend (em outro terminal)
+cd frontend
 npm install
 npm start
-💡 Dica profissional
-
-Coloque um README.md explicando:
-
-Como rodar backend
-Como rodar frontend
-✅ Resumo rápido
-
-✔ Use .java para backend
-✔ Use .js ou .jsx para React
-✔ Separe em pastas backend e frontend
-✔ Suba com git add .
