@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Eletrotécnica</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
+
+        .quiz-content {
+            padding: 30px;
+        }
+
+        .question-card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            border-left: 5px solid #667eea;
+            transition: transform 0.2s;
+        }
+
+        .question-card:hover {
+            transform: translateX(5px);
+        }
+
+        .question-number {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 30px;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .question-text {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+
+        .options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .option-btn {
+            padding: 15px 20px;
+            border: 2px solid #e0e0e0;
+            background: white;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1rem;
+            text-align: left;
+        }
+
+        .option-btn:hover {
+            border-color: #667eea;
+            background: #f0f4ff;
+        }
+
+        .option-btn.selected {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .option-btn.correct {
+            background: #10b981;
+            color: white;
+            border-color: #10b981;
+        }
+
+        .option-btn.wrong {
+            background: #ef4444;
+            color: white;
+            border-color: #ef4444;
+        }
+
+        .finish-btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-top: 20px;
+        }
+
+        .finish-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .finish-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Resultados */
+        .result-container {
+            padding: 30px;
+            text-align: center;
+        }
+
+        .score-circle {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            margin: 0 auto 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 3rem;
+            font-weight: bold;
+            position: relative;
+        }
+
+        .score-circle.excellent {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+
+        .score-circle.good {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+        }
+
+        .score-circle.study {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+        }
+
+        .score-label {
+            font-size: 1rem;
+            font-weight: normal;
+            opacity: 0.9;
+        }
+
+        .results-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 30px;
+            text-align: left;
+        }
+
+        .results-table th {
+            background: #667eea;
+            color: white;
+            padding: 15px;
+            font-weight: 600;
+        }
+
+        .results-table td {
+            padding: 15px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .results-table tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .status-icon {
+            font-size: 1.5rem;
+        }
+
+        .status-correct {
+            color: #10b981;
+        }
+
+        .status-wrong {
+            color: #ef4444;
+        }
+
+        .restart-btn {
+            margin-top: 30px;
+            padding: 15px 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .restart-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .progress-bar {
+            height: 6px;
+            background: #e0e0e0;
+            border-radius: 3px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            transition: width 0.3s;
+        }
+
+        @media (max-width: 600px) {
+            .options {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>⚡ Quiz Eletrotécnica</h1>
+            <p>Teste seus conhecimentos em elétrica</p>
+        </div>
+
+        <div id="quiz-app">
+            <!-- Conteúdo será gerado pelo JavaScript -->
+        </div>
+    </div>
+
+    <script>
+        // Banco de questões (mesmo do seu Java)
+        const questions = [
+            {
+                question: "Qual a tensão padrão no Brasil?",
+                options: ["110V", "127V", "220V", "380V"],
+                correctIndex: 1
+            },
+            {
+                question: "Unidade de potência?",
+                options: ["Volt", "Ampere", "Watt", "Ohm"],
+                correctIndex: 2
+            },
+            {
+                question: "Lei de Ohm?",
+                options: ["V=IR", "P=VI", "I=VR", "R=VI"],
+                correctIndex: 0
+            },
+            {
+                question: "Fator de potência ideal?",
+                options: ["0", "0.5", "1", "2"],
+                correctIndex: 2
+            },
+            {
+                question: "Corrente contínua é?",
+                options: ["AC", "DC", "Hz", "VA"],
+                correctIndex: 1
+            },
+            {
+                question: "Unidade de resistência?",
+                options: ["Watt", "Volt", "Ohm", "Tesla"],
+                correctIndex: 2
+            },
+            {
+                question: "Potência aparente?",
+                options: ["W", "VA", "VAR", "Hz"],
+                correctIndex: 1
+            },
+            {
+                question: "Frequência no Brasil?",
+                options: ["50Hz", "60Hz", "120Hz", "220Hz"],
+                correctIndex: 1
+            },
+            {
+                question: "Capacitor armazena?",
+                options: ["Corrente", "Energia elétrica", "Calor", "Magnetismo"],
+                correctIndex: 1
+            },
+            {
+                question: "Símbolo da corrente?",
+                options: ["V", "I", "R", "P"],
+                correctIndex: 1
+            }
+        ];
+
+        // Estado da aplicação
+        let currentQuestions = [];
+        let answers = {};
+        let showingResults = false;
+
+        // Embaralhar array (Fisher-Yates)
+        function shuffle(array) {
+            const shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+
+        // Inicializar quiz
+        function initQuiz() {
+            currentQuestions = shuffle(questions);
+            answers = {};
+            showingResults = false;
+            renderQuiz();
+        }
+
+        // Renderizar quiz
+        function renderQuiz() {
+            const app = document.getElementById('quiz-app');
+            
+            if (showingResults) {
+                renderResults(app);
+                return;
+            }
+
+            const answeredCount = Object.keys(answers).length;
+            const progress = (answeredCount / currentQuestions.length) * 100;
+
+            let html = `
+                <div class="quiz-content">
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: ${progress}%"></div>
+                    </div>
+                    <p style="text-align: center; color: #666; margin-bottom: 20px;">
+                        Respondidas: ${answeredCount} de ${currentQuestions.length}
+                    </p>
+            `;
+
+            currentQuestions.forEach((q, index) => {
+                const selectedAnswer = answers[index];
+                
+                html += `
+                    <div class="question-card">
+                        <div class="question-text">
+                            <span class="question-number">${index + 1}</span>
+                            ${q.question}
+                        </div>
+                        <div class="options">
+                            ${q.options.map((opt, optIndex) => `
+                                <button 
+                                    class="option-btn ${selectedAnswer === optIndex ? 'selected' : ''}"
+                                    onclick="selectAnswer(${index}, ${optIndex})"
+                                >
+                                    ${opt}
+                                </button>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            });
+
+            const allAnswered = answeredCount === currentQuestions.length;
+            
+            html += `
+                <button 
+                    class="finish-btn" 
+                    onclick="finishQuiz()"
+                    ${!allAnswered ? 'disabled' : ''}
+                >
+                    ${allAnswered ? '✓ Finalizar Quiz' : `Responda todas (${answeredCount}/${currentQuestions.length})`}
+                </button>
+            </div>
+            `;
+
+            app.innerHTML = html;
+        }
+
+        // Selecionar resposta
+        function selectAnswer(questionIndex, optionIndex) {
+            answers[questionIndex] = optionIndex;
+            renderQuiz();
+        }
+
+        // Finalizar e calcular resultado
+        function finishQuiz() {
+            showingResults = true;
+            renderQuiz();
+        }
+
+        // Renderizar resultados
+        function renderResults(container) {
+            let score = 0;
+            const details = currentQuestions.map((q, i) => {
+                const userAnswer = answers[i];
+                const isCorrect = userAnswer === q.correctIndex;
+                if (isCorrect) score += 2; // 2 pontos por questão (total 20)
+
+                return {
+                    question: q.question,
+                    correct: q.options[q.correctIndex],
+                    user: q.options[userAnswer],
+                    isCorrect
+                };
+            });
+
+            const maxScore = currentQuestions.length * 2;
+            const percentage = (score / maxScore) * 100;
+            
+            let scoreClass = 'study';
+            let message = 'Precisa estudar mais!';
+            if (percentage >= 80) {
+                scoreClass = 'excellent';
+                message = 'Excelente! 🎉';
+            } else if (percentage >= 60) {
+                scoreClass = 'good';
+                message = 'Bom trabalho! 👍';
+            }
+
+            let html = `
+                <div class="result-container">
+                    <div class="score-circle ${scoreClass}">
+                        <div>${score}/${maxScore}</div>
+                        <div class="score-label">${message}</div>
+                    </div>
+                    
+                    <h2 style="color: #2c3e50; margin-bottom: 10px;">Resultado Detalhado</h2>
+                    
+                    <table class="results-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Pergunta</th>
+                                <th>Sua resposta</th>
+                                <th>Correta</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${details.map((d, i) => `
+                                <tr>
+                                    <td>${i + 1}</td>
+                                    <td>${d.question}</td>
+                                    <td style="${d.isCorrect ? 'color: #10b981; font-weight: 600;' : 'color: #ef4444;'}">
+                                        ${d.user}
+                                    </td>
+                                    <td style="color: #10b981; font-weight: 600;">
+                                        ${d.correct}
+                                    </td>
+                                    <td class="status-icon">
+                                        ${d.isCorrect 
+                                            ? '<span class="status-correct">✓</span>' 
+                                            : '<span class="status-wrong">✗</span>'
+                                        }
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                    
+                    <button class="restart-btn" onclick="initQuiz()">
+                        🔄 Tentar Novamente
+                    </button>
+                </div>
+            `;
+
+            container.innerHTML = html;
+        }
+
+        // Iniciar ao carregar página
+        initQuiz();
+    </script>
+</body>
+</html>
